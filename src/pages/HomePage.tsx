@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Hero from "../sections/Hero";
 import ServicesGridSection from "../sections/ServicesGridSection";
+import UseCasesSection from "../sections/UseCasesSection";
 
 const STAGE_HEIGHT_VH = 220;
 
@@ -62,28 +63,30 @@ function HomePage() {
   const servicesTranslateY = (1 - scrollProgress) * 105;
 
   return (
-    <section ref={stageRef} className="relative" style={{ height: `${STAGE_HEIGHT_VH}dvh` }}>
-      <div className="sticky top-0 h-[100dvh] overflow-hidden">
-        <div
-          className="absolute inset-0 z-10 flex justify-center"
-        >
-          <Hero
-            contentStyle={{
-              willChange: "transform, opacity, filter",
-              opacity: heroOpacity,
-              filter: `blur(${heroBlur}px)`,
-              transform: `translateY(${heroTranslateY}vh) scale(${heroScale})`,
-            }}
-          />
-        </div>
+    <>
+      <section ref={stageRef} className="relative" style={{ height: `${STAGE_HEIGHT_VH}dvh` }}>
+        <div className="sticky top-0 h-[100dvh] overflow-hidden">
+          <div className="absolute inset-0 z-10 flex justify-center">
+            <Hero
+              contentStyle={{
+                willChange: "transform, opacity, filter",
+                opacity: heroOpacity,
+                filter: `blur(${heroBlur}px)`,
+                transform: `translateY(${heroTranslateY}vh) scale(${heroScale})`,
+              }}
+            />
+          </div>
 
-        <div
-          className="absolute inset-0 z-20"
-          style={{ willChange: "transform", transform: `translateY(${servicesTranslateY}%)` }}>
-          <ServicesGridSection />
+          <div
+            className="absolute inset-0 z-20"
+            style={{ willChange: "transform", transform: `translateY(${servicesTranslateY}%)` }}>
+            <ServicesGridSection />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <UseCasesSection />
+    </>
   );
 }
 
