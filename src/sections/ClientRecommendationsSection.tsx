@@ -1,5 +1,6 @@
 import SectionHeading from "../components/shared/SectionHeading";
 
+// Repetimos 2 copias de cada track para conseguir loop infinito sin cortes.
 const MARQUEE_COPIES = [0, 1] as const;
 
 type ClientRecommendation = {
@@ -16,6 +17,13 @@ type ClientRecommendationCardProps = {
   quote: string;
 };
 
+type RecommendationMarqueeRowProps = {
+  recommendations: ClientRecommendation[];
+  trackClassName?: string;
+  className?: string;
+};
+
+// Dataset de testimonios ficticios para poblar el marquee.
 const CLIENT_RECOMMENDATIONS: ClientRecommendation[] = [
   {
     name: "Valentina Ruiz",
@@ -68,9 +76,16 @@ const CLIENT_RECOMMENDATIONS: ClientRecommendation[] = [
 ] as const;
 const CLIENT_RECOMMENDATIONS_REVERSED = [...CLIENT_RECOMMENDATIONS].reverse();
 
+// Configuración declarativa de filas para evitar markup duplicado.
+const MARQUEE_ROWS: RecommendationMarqueeRowProps[] = [
+  { recommendations: CLIENT_RECOMMENDATIONS },
+  { recommendations: CLIENT_RECOMMENDATIONS_REVERSED, trackClassName: "client-recommendations-track-ltr" },
+  { recommendations: CLIENT_RECOMMENDATIONS },
+];
+
 function ClientRecommendationCard({ avatarUrl, name, company, quote }: ClientRecommendationCardProps) {
   return (
-    <article className="min-h-[154.25px] w-[300px] rounded-xl border border-[var(--line)] bg-[var(--bg-muted)] p-4">
+    <article className="min-h-[154.25px] w-[85vw] max-w-[300px] rounded-xl border border-[var(--line)] bg-[var(--bg-muted)] p-4 sm:w-[300px]">
       <header className="mb-3 flex items-center gap-3">
         <img src={avatarUrl} alt={`Avatar de ${name}`} className="h-10 w-10 rounded-full object-cover" loading="lazy" />
         <div className="min-w-0">
@@ -84,15 +99,9 @@ function ClientRecommendationCard({ avatarUrl, name, company, quote }: ClientRec
   );
 }
 
-function RecommendationMarqueeRow({
-  recommendations,
-  trackClassName,
-}: {
-  recommendations: ClientRecommendation[];
-  trackClassName?: string;
-}) {
+function RecommendationMarqueeRow({ recommendations, trackClassName, className = "" }: RecommendationMarqueeRowProps) {
   return (
-    <div className="client-recommendations-mask w-full overflow-hidden py-4">
+    <div className={`client-recommendations-mask w-full overflow-hidden py-4 ${className}`}>
       <div className={`client-recommendations-track gap-4 ${trackClassName ?? ""}`}>
         {MARQUEE_COPIES.map((copyIndex) => (
           <div key={copyIndex} className="client-recommendations-group gap-4 pr-4" aria-hidden={copyIndex === 1}>
@@ -114,26 +123,32 @@ function RecommendationMarqueeRow({
 
 function ClientRecommendationsSection() {
   return (
-    <section className="relative overflow-hidden border-x border-[var(--line)] bg-[var(--bg)] px-4 py-24">
+    <section className="relative mb-48 overflow-hidden bg-[var(--bg)] p-4">
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-8">
+        {/* Encabezado de sección */}
         <SectionHeading
           align="start"
           title="Recomendaciones de clientes"
           subtitle="Referencias de clientes que respaldan la calidad nuestras soluciones."
         />
 
-        <div className="relative flex flex-col gap-2">
-          <RecommendationMarqueeRow recommendations={CLIENT_RECOMMENDATIONS} />
-          <RecommendationMarqueeRow
-            recommendations={CLIENT_RECOMMENDATIONS_REVERSED}
-            trackClassName="client-recommendations-track-ltr"
-          />
-          <RecommendationMarqueeRow recommendations={CLIENT_RECOMMENDATIONS} />
+        {/* Marquee en varias filas con direcciones alternadas */}
+        <div className="relative mx-auto flex w-full max-w-[280px] flex-col gap-2">
+          {MARQUEE_ROWS.map((row, index) => (
+            <RecommendationMarqueeRow
+              key={`recommendation-row-${index}`}
+              recommendations={row.recommendations}
+              trackClassName={row.trackClassName}
+              className={row.className}
+            />
+          ))}
 
+          {/* Capa lineal inferior para integrar visualmente el final del bloque */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(to_top,var(--bg)_0%,transparent_100%)]"
           />
+          {/* Halo circular difuso para suavizar el corte al final del contenido */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute bottom-[-140px] left-1/2 h-[300px] w-[92%] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,transparent_24%,var(--bg)_72%,var(--bg)_100%)] opacity-95 blur-2xl"

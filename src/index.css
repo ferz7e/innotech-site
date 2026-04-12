@@ -2,8 +2,8 @@
 
 :root {
   /* color */
-  --accent-1: #2962ff;
-  --accent-2: #7c3aed;
+  --accent-1: #b80c09;
+  --accent-2: #0b4f6c;
 
   --light-bg: #fcfcfd;
   --light-bg-muted: #f4f4f5;
@@ -21,6 +21,7 @@
 
   --bg: var(--light-bg);
   --bg-muted: var(--light-bg-muted);
+  --bg-muted-accent: color-mix(in srgb, var(--accent-2) 8%, #ffffff);
   --text: var(--light-text);
   --text-muted: var(--light-text-muted);
   --line: var(--light-border);
@@ -30,6 +31,7 @@
 :root[data-theme="light"] {
   --bg: var(--light-bg);
   --bg-muted: var(--light-bg-muted);
+  --bg-muted-accent: color-mix(in srgb, var(--accent-2) 8%, #ffffff);
   --text-muted: var(--light-text-muted);
   --text: var(--light-text);
   --line: var(--light-border);
@@ -39,6 +41,7 @@
 :root[data-theme="dark"] {
   --bg: var(--dark-bg);
   --bg-muted: var(--dark-bg-muted);
+  --bg-muted-accent: color-mix(in srgb, var(--accent-2) 24%, #000000);
   --text: var(--dark-text);
   --text-muted: var(--dark-text-muted);
   --line: var(--dark-border);

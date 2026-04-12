@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import AboutInnotechSection from "../sections/AboutInnotechSection";
-import ClientRecommendationsSection from "../sections/ClientRecommendationsSection";
 import Hero from "../sections/Hero";
 import ServicesGridSection from "../sections/ServicesGridSection";
+import AboutInnotechSection from "../sections/AboutInnotechSection";
 import UseCasesSection from "../sections/UseCasesSection";
+import ContactSection from "../sections/ContactSection";
+import ClientRecommendationsSection from "../sections/ClientRecommendationsSection";
 
 const STAGE_HEIGHT_VH = 220;
 
@@ -82,7 +83,7 @@ function HomePage() {
           </div>
 
           <div
-            className="absolute inset-0 z-20"
+            className="absolute inset-0 z-20 bg-[linear-gradient(to_bottom,transparent_0%,var(--bg-muted)_40%,var(--bg-muted)_100%)]"
             style={{ willChange: "transform", transform: `translateY(${servicesTranslateY}%)` }}>
             <ServicesGridSection />
           </div>
@@ -91,6 +92,7 @@ function HomePage() {
 
       <AboutInnotechSection />
       <UseCasesSection />
+      <ContactSection />
       <ClientRecommendationsSection />
     </>
   );

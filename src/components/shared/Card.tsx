@@ -23,12 +23,12 @@ function Card({
 }: CardProps) {
   return (
     <article
-      className={`h-[280px] max-h-[280px] overflow-hidden rounded-xl border border-[var(--line)] transition-[border-color,box-shadow] duration-300 hover:border-[var(--accent-1)] ${className}`}>
-      <div className="flex h-1/3 items-center justify-center bg-[var(--bg)]">
-        {icon ?? <LuServer className="h-8 w-8 text-[var(--accent-1)]" aria-hidden="true" />}
+      className={`h-[280px] max-h-[280px] overflow-hidden rounded-xl border border-[var(--line)] transition-[border-color,box-shadow] duration-300 hover:border-[var(--accent-2)] ${className}`}>
+      <div className="flex h-1/3 items-center justify-center bg-[var(--bg-muted-accent)]">
+        {icon ?? <LuServer className="h-8 w-8 text-[var(--text)]" aria-hidden="true" />}
       </div>
 
-      <div className="flex h-2/3 flex-col justify-between bg-[var(--bg-muted)] p-4">
+      <div className="flex h-2/3 flex-col justify-between bg-[var(--bg)] p-4">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold leading-tight text-[var(--text)]">{title}</h3>
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">{subtitle}</p>

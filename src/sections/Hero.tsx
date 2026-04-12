@@ -24,8 +24,10 @@ type HeroProps = {
 function Hero({ contentStyle }: HeroProps) {
   return (
     // Contenedor principal del Hero: alto de viewport, borde inline y fondo con degradado vertical.
-    <section className="flex min-h-[75dvh] w-full max-w-[1240px] items-center justify-center border-x border-[var(--line)] bg-[linear-gradient(to_bottom,var(--bg)_0%,var(--bg)_80%,var(--bg-muted)_100%)] p-4">
-      <div className="flex w-full flex-col items-center justify-center gap-8 text-center" style={contentStyle}>
+    <section className="flex w-full items-center justify-center bg-[linear-gradient(to_bottom,var(--bg)_0%,var(--bg)_80%,var(--bg-muted)_100%)]">
+      <div
+        className="flex w-full max-w-[1240px] flex-col items-center justify-center gap-8 text-center p-4"
+        style={contentStyle}>
         {/* 1) Badge */}
         <div>
           <Badge>{HERO_COPY.badge}</Badge>
