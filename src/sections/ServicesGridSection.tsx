@@ -4,12 +4,7 @@ const GRID_ITEMS = Array.from({ length: 5 });
 
 function ServicesGridSection() {
   return (
-    <section className="relative min-h-[100dvh] border-x border-[var(--line)] bg-[var(--bg-muted)] p-4">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[200px] -translate-y-full bg-[linear-gradient(to_bottom,transparent_0%,var(--bg-muted)_100%)]"
-      />
-
+    <section className="relative min-h-[100dvh] border-x border-[var(--line)] bg-[linear-gradient(to_bottom,transparent_0%,var(--bg-muted)_28%,var(--bg-muted)_100%)] p-4">
       <div className="relative z-10 mx-auto flex h-[calc(100dvh-2rem)] w-full max-w-[1240px] flex-col gap-8">
         <SectionHeading
           align="start"

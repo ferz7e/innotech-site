@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import AboutInnotechSection from "../sections/AboutInnotechSection";
 import Hero from "../sections/Hero";
 import ServicesGridSection from "../sections/ServicesGridSection";
 import UseCasesSection from "../sections/UseCasesSection";
@@ -56,10 +57,12 @@ function HomePage() {
   }, []);
 
   const fadeProgress = Math.min(1, scrollProgress * 1.25);
-  const heroOpacity = Math.pow(1 - fadeProgress, 1.9);
-  const heroBlur = fadeProgress * 4.5;
+  const heroOpacity = 1 - fadeProgress * 0.22;
   const heroTranslateY = -scrollProgress * 5;
-  const heroScale = 1 - fadeProgress * 0.15;
+  const heroScale = 1 - fadeProgress * 0.28;
+  const blurStartAt = 0.25;
+  const blurProgress = Math.min(1, Math.max(0, (scrollProgress - blurStartAt) / (1 - blurStartAt)));
+  const heroBlur = blurProgress * 4;
   const servicesTranslateY = (1 - scrollProgress) * 105;
 
   return (
@@ -85,6 +88,7 @@ function HomePage() {
         </div>
       </section>
 
+      <AboutInnotechSection />
       <UseCasesSection />
     </>
   );
