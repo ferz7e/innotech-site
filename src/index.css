@@ -47,10 +47,71 @@
 
 body {
   margin: 0;
+  padding: 0;
   background: var(--bg);
   color: var(--text);
+  box-sizing: border-box;
 }
 
 #root {
   min-height: 100vh;
+}
+
+@keyframes loger-logo-sequence {
+  0% {
+    opacity: 0;
+    transform: translateX(-26px);
+    clip-path: inset(0 100% 0 0);
+    filter: blur(2px);
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+  70.45% {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(26px);
+    clip-path: inset(0 0 0 100%);
+    filter: blur(2px);
+  }
+}
+
+.loger-logo {
+  will-change: transform, opacity, clip-path, filter;
+  animation: loger-logo-sequence 2800ms cubic-bezier(0.22, 1, 0.36, 1) 900ms both;
+}
+
+@keyframes logo-teleport-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+    clip-path: inset(0 100% 0 0);
+    filter: blur(1.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+}
+
+.logo-teleport-enter {
+  will-change: transform, opacity, clip-path, filter;
+  animation: logo-teleport-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loger-logo,
+  .logo-teleport-enter {
+    animation: none;
+  }
 }
