@@ -1,5 +1,7 @@
+import Hero from "../sections/Hero";
+
 function HomePage() {
-  return <p>Home</p>
+  return <Hero />;
 }
 
-export default HomePage
+export default HomePage;

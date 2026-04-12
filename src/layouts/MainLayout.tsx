@@ -38,7 +38,7 @@ function MainLayout() {
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-[var(--bg)] text-[var(--text)]">
       {isLoaderVisible && <Loger onFinish={handleLoaderFinish} />}
       <Header revealLogo={!isLoaderVisible} />
-      <main className="mx-auto w-full max-w-[1240px] px-4 py-10">
+      <main className="mx-auto w-full max-w-[1240px]">
         <Outlet />
       </main>
       <Footer themeMode={themeMode} onToggleTheme={handleToggleTheme} />

@@ -23,7 +23,7 @@ function Header({ revealLogo = true }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--bg)]">
-      <div className="relative mx-auto flex w-full max-w-[1120px] items-center justify-between px-4 py-4">
+      <div className="relative mx-auto flex w-full max-w-[1240px] items-center justify-between p-4">
         <div className="flex items-center gap-16">
           {/* Marca principal (se puede revelar tras loader). */}
           <a
