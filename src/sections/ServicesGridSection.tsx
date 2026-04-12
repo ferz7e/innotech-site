@@ -16,7 +16,7 @@ function ServicesGridSection() {
           {GRID_ITEMS.map((_, index) => (
             <div
               key={index}
-              className={`rounded-xl border border-[var(--line)] bg-[var(--bg)] ${index === 0 ? "col-span-2" : ""}`}
+              className={`rounded-xl border border-[var(--line)] bg-[var(--bg)] transition-colors duration-300 hover:border-[var(--accent-1)] ${index === 0 ? "col-span-2" : ""}`}
             />
           ))}
         </div>

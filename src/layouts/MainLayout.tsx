@@ -35,7 +35,7 @@ function MainLayout() {
   }, []);
 
   return (
-    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-[var(--bg)] text-[var(--text)] bg-[var(--bg-muted)]">
+    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-[var(--bg)] text-[var(--text)] bg-[var(--bg)]">
       {isLoaderVisible && <Loger onFinish={handleLoaderFinish} />}
       <Header revealLogo={!isLoaderVisible} />
       <main className="mx-auto w-full max-w-[1240px] ">

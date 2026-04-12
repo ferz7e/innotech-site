@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AboutInnotechSection from "../sections/AboutInnotechSection";
+import ClientRecommendationsSection from "../sections/ClientRecommendationsSection";
 import Hero from "../sections/Hero";
 import ServicesGridSection from "../sections/ServicesGridSection";
 import UseCasesSection from "../sections/UseCasesSection";
@@ -90,6 +91,7 @@ function HomePage() {
 
       <AboutInnotechSection />
       <UseCasesSection />
+      <ClientRecommendationsSection />
     </>
   );
 }

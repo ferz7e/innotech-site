@@ -140,10 +140,60 @@ body {
   mask-size: 100% 100%;
 }
 
+@keyframes client-recommendations-marquee-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes client-recommendations-marquee-ltr {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.client-recommendations-track {
+  display: flex;
+  width: max-content;
+  align-items: flex-start;
+  will-change: transform;
+  animation: client-recommendations-marquee-rtl 88s linear infinite;
+}
+
+.client-recommendations-track.client-recommendations-track-ltr {
+  animation: client-recommendations-marquee-ltr 92s linear infinite;
+}
+
+.client-recommendations-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+}
+
+.client-recommendations-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.client-recommendations-mask:hover .client-recommendations-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loger-logo,
   .logo-teleport-enter,
-  .hero-marquee-track {
+  .hero-marquee-track,
+  .client-recommendations-track {
     animation: none;
   }
 }

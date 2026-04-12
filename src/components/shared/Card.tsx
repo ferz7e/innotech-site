@@ -22,7 +22,8 @@ function Card({
   className = "",
 }: CardProps) {
   return (
-    <article className={`h-[280px] max-h-[280px] overflow-hidden rounded-xl border border-[var(--line)] ${className}`}>
+    <article
+      className={`h-[280px] max-h-[280px] overflow-hidden rounded-xl border border-[var(--line)] transition-[border-color,box-shadow] duration-300 hover:border-[var(--accent-1)] ${className}`}>
       <div className="flex h-1/3 items-center justify-center bg-[var(--bg)]">
         {icon ?? <LuServer className="h-8 w-8 text-[var(--accent-1)]" aria-hidden="true" />}
       </div>
