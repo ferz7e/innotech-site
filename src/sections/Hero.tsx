@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { LuArrowRight } from "react-icons/lu";
 import Badge from "../components/shared/Badge";
 import SecondaryButton from "../components/shared/SecondaryButton";
@@ -16,11 +17,15 @@ const HERO_COPY = {
   trustText: "Nuestros clientes confían en la calidad de nuestras soluciones",
 } as const;
 
-function Hero() {
+type HeroProps = {
+  contentStyle?: CSSProperties;
+};
+
+function Hero({ contentStyle }: HeroProps) {
   return (
     // Contenedor principal del Hero: alto de viewport, borde inline y fondo con degradado vertical.
-    <section className="flex min-h-[75dvh] w-full max-w-[1240px] items-center justify-center border-x border-[var(--line)] bg-[linear-gradient(to_bottom,var(--bg)_0%,var(--bg)_72%,var(--bg-muted)_100%)] p-4">
-      <div className="flex w-full flex-col items-center justify-center gap-8 text-center">
+    <section className="flex min-h-[75dvh] w-full max-w-[1240px] items-center justify-center border-x border-[var(--line)] p-4 bg-[var(--bg)]">
+      <div className="flex w-full flex-col items-center justify-center gap-8 text-center" style={contentStyle}>
         {/* 1) Badge */}
         <div>
           <Badge>{HERO_COPY.badge}</Badge>
@@ -30,9 +35,7 @@ function Hero() {
         <div>
           <h1 className="text-balance text-4xl font-semibold leading-[1.06] text-[var(--text)] md:text-5xl lg:text-6xl">
             {HERO_COPY.titleStart}
-            <span className="block bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)] bg-clip-text text-transparent">
-              {HERO_COPY.titleHighlight}
-            </span>
+            <span className="block bg-[var(--accent-1)] bg-clip-text text-transparent">{HERO_COPY.titleHighlight}</span>
           </h1>
         </div>
 

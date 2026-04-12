@@ -35,10 +35,10 @@ function MainLayout() {
   }, []);
 
   return (
-    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-[var(--bg)] text-[var(--text)]">
+    <div className="grid min-h-screen grid-rows-[auto_1fr_auto] bg-[var(--bg)] text-[var(--text)] bg-[var(--bg-muted)]">
       {isLoaderVisible && <Loger onFinish={handleLoaderFinish} />}
       <Header revealLogo={!isLoaderVisible} />
-      <main className="mx-auto w-full max-w-[1240px]">
+      <main className="mx-auto w-full max-w-[1240px] ">
         <Outlet />
       </main>
       <Footer themeMode={themeMode} onToggleTheme={handleToggleTheme} />
