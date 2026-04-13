@@ -3,6 +3,7 @@ import { LuArrowRight, LuChevronDown, LuChevronRight, LuX } from "react-icons/lu
 import IconButton from "../../components/shared/IconButton";
 import PrimaryButton from "../../components/shared/PrimaryButton";
 import { NAVIGATION_GROUPS } from "./navigationData";
+import { LuFacebook, LuInstagram, LuMail } from "react-icons/lu";
 
 type MobileNavMenuProps = {
   isOpen: boolean;
@@ -106,11 +107,13 @@ function MobileNavMenu({ isOpen, onClose, revealLogo = true }: MobileNavMenuProp
           })}
         </div>
 
-        <div className="border-t border-[var(--line)] p-5">
-          <PrimaryButton
-            href="/"
-            className="!w-full justify-center"
-            icon={<LuArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}>
+        <div className=" flex items-center justify-between border-t border-[var(--line)] p-4">
+          <div className="flex items-center gap-2">
+            <IconButton icon={<LuInstagram className="h-4 w-4" aria-hidden="true" />} label="Instagram" />
+            <IconButton icon={<LuMail className="h-4 w-4" aria-hidden="true" />} label="Gmail" />
+            <IconButton icon={<LuFacebook className="h-4 w-4" aria-hidden="true" />} label="Facebook" />
+          </div>
+          <PrimaryButton href="/contact" icon={<LuArrowRight aria-hidden="true" />}>
             Contactanos
           </PrimaryButton>
         </div>

@@ -7,6 +7,10 @@ import ContactSection from "../sections/ContactSection";
 import ClientRecommendationsSection from "../sections/ClientRecommendationsSection";
 
 const STAGE_HEIGHT_VH = 220;
+const MOBILE_MAX_WIDTH = 767;
+const SNAP_GESTURE_THRESHOLD = 40;
+const SNAP_LOCK_DURATION_MS = 520;
+const SNAP_TOLERANCE_PX = 24;
 
 function HomePage() {
   const stageRef = useRef<HTMLElement | null>(null);
@@ -66,6 +70,85 @@ function HomePage() {
   const blurProgress = Math.min(1, Math.max(0, (scrollProgress - blurStartAt) / (1 - blurStartAt)));
   const heroBlur = blurProgress * 4;
   const servicesTranslateY = (1 - scrollProgress) * 105;
+
+  useEffect(() => {
+    let touchStartY = 0;
+    let isSnapLocked = false;
+    let lockTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const isMobileViewport = () => window.innerWidth <= MOBILE_MAX_WIDTH;
+
+    const lockSnap = () => {
+      isSnapLocked = true;
+      if (lockTimeoutId) {
+        clearTimeout(lockTimeoutId);
+      }
+      lockTimeoutId = setTimeout(() => {
+        isSnapLocked = false;
+      }, SNAP_LOCK_DURATION_MS);
+    };
+
+    const handleSnap = (deltaY: number) => {
+      if (!isMobileViewport() || isSnapLocked || Math.abs(deltaY) < SNAP_GESTURE_THRESHOLD) {
+        return;
+      }
+
+      const stageElement = stageRef.current;
+      if (!stageElement) {
+        return;
+      }
+
+      const stageTop = stageElement.offsetTop;
+      const stageScrollableDistance = stageElement.offsetHeight - window.innerHeight;
+      if (stageScrollableDistance <= 0) {
+        return;
+      }
+
+      const heroTop = stageTop;
+      const servicesTop = stageTop + stageScrollableDistance;
+      const currentScrollY = window.scrollY;
+      const isInsideStage =
+        currentScrollY >= heroTop - SNAP_TOLERANCE_PX && currentScrollY <= servicesTop + SNAP_TOLERANCE_PX;
+
+      if (!isInsideStage) {
+        return;
+      }
+
+      // Gesto hacia abajo en Hero (o tramo inicial) -> salta al inicio de Services.
+      if (deltaY > 0 && currentScrollY <= heroTop + stageScrollableDistance * 0.38) {
+        window.scrollTo({ top: servicesTop, behavior: "smooth" });
+        lockSnap();
+        return;
+      }
+
+      // Gesto hacia arriba al llegar al inicio de Services -> vuelve a Hero completo.
+      if (deltaY < 0 && Math.abs(currentScrollY - servicesTop) <= SNAP_TOLERANCE_PX * 3) {
+        window.scrollTo({ top: heroTop, behavior: "smooth" });
+        lockSnap();
+      }
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartY = event.changedTouches[0]?.clientY ?? 0;
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      const touchEndY = event.changedTouches[0]?.clientY ?? touchStartY;
+      const deltaY = touchStartY - touchEndY;
+      handleSnap(deltaY);
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      if (lockTimeoutId) {
+        clearTimeout(lockTimeoutId);
+      }
+    };
+  }, []);
 
   return (
     <>
