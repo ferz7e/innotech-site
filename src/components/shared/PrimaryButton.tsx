@@ -1,14 +1,17 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { Link } from "react-router-dom";
 
-type PrimaryButtonProps = ComponentPropsWithoutRef<"a"> & {
+type PrimaryButtonProps = Omit<ComponentPropsWithoutRef<"a">, "href"> & {
+  href: string;
   icon?: ReactNode;
 };
 
-function PrimaryButton({ children, icon, ...props }: PrimaryButtonProps) {
-  return (
-    <a
-      className="group inline-flex items-center rounded-[4px] border border-[var(--accent-1)] bg-[var(--accent-1)] px-4 py-2 text-sm transition hover:brightness-116"
-      {...props}>
+const isExternalHref = (href: string) =>
+  href.startsWith("http://") || href.startsWith("https://") || href.startsWith("mailto:") || href.startsWith("tel:");
+
+function PrimaryButton({ children, icon, href, ...props }: PrimaryButtonProps) {
+  const buttonContent = (
+    <>
       <span className="text-[var(--dark-text)]">{children}</span>
 
       {icon && (
@@ -16,7 +19,27 @@ function PrimaryButton({ children, icon, ...props }: PrimaryButtonProps) {
           {icon}
         </span>
       )}
-    </a>
+    </>
+  );
+
+  if (isExternalHref(href) || href.startsWith("#")) {
+    return (
+      <a
+        href={href}
+        className="group inline-flex items-center rounded-[4px] border border-[var(--accent-1)] bg-[var(--accent-1)] px-4 py-2 text-sm transition hover:brightness-116"
+        {...props}>
+        {buttonContent}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={href}
+      className="group inline-flex items-center rounded-[4px] border border-[var(--accent-1)] bg-[var(--accent-1)] px-4 py-2 text-sm transition hover:brightness-116"
+      {...props}>
+      {buttonContent}
+    </Link>
   );
 }
 

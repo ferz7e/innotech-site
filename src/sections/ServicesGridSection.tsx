@@ -15,6 +15,7 @@ const SERVICES_DATA = [
     title: "Infraestructura",
     description: "Diseñamos una base tecnológica robusta para asegurar continuidad, rendimiento y escalabilidad.",
     items: getItemsByCategory("Infraestructura"),
+    imageSrc: "https://picsum.photos/id/1040/1200/900",
     imageAlt: "Infraestructura",
     isWide: true, // Para el diseño de 2 columnas
     imageFirst: false,
@@ -23,6 +24,7 @@ const SERVICES_DATA = [
     title: "Comunicación",
     description: "Integramos canales de voz empresarial para que tus equipos y clientes se conecten con claridad.",
     items: getItemsByCategory("Comunicaciones"),
+    imageSrc: "https://picsum.photos/id/1062/1200/900",
     imageAlt: "Comunicación",
     imageFirst: true,
   },
@@ -30,6 +32,7 @@ const SERVICES_DATA = [
     title: "Automatizaciones",
     description: "Implementamos automatización inteligente para simplificar tareas repetitivas y optimizar tiempos.",
     items: getItemsByCategory("Automatizacion", ["Domotica"]),
+    imageSrc: "https://picsum.photos/id/1070/1200/900",
     imageAlt: "Automatizaciones",
     imageFirst: false,
   },
@@ -37,6 +40,7 @@ const SERVICES_DATA = [
     title: "Seguridad",
     description: "Protegemos tus activos críticos con soluciones de monitoreo y control para operar con confianza.",
     items: getItemsByCategory("Seguridad", ["Videovigilancia IP"]),
+    imageSrc: "https://picsum.photos/id/1018/1200/900",
     imageAlt: "Seguridad",
     imageFirst: true,
   },
@@ -44,6 +48,7 @@ const SERVICES_DATA = [
     title: "Redes",
     description: "Diseñamos y optimizamos redes empresariales para mantener conectividad estable y segura.",
     items: getItemsByCategory("Redes"),
+    imageSrc: "https://picsum.photos/id/1039/1200/900",
     imageAlt: "Redes",
     imageFirst: false,
   },
@@ -57,12 +62,13 @@ interface ServiceCardProps {
   title: string;
   description: string;
   items: string[];
+  imageSrc: string;
   imageAlt: string;
   isWide?: boolean;
   imageFirst?: boolean;
 }
 
-const ServiceCard = ({ title, description, items, imageAlt, isWide, imageFirst }: ServiceCardProps) => {
+const ServiceCard = ({ title, description, items, imageSrc, imageAlt, isWide, imageFirst }: ServiceCardProps) => {
   const isVerticalLayout = !isWide;
 
   // Contenedor de Información (Texto + Lista)
@@ -88,13 +94,13 @@ const ServiceCard = ({ title, description, items, imageAlt, isWide, imageFirst }
     </div>
   );
 
-  // Contenedor de Imagen Placeholder
-  const ImagePlaceholder = (
+  // Contenedor de Imagen
+  const ImageContent = (
     <div
-      className={`hidden min-h-0 items-center justify-center rounded-lg border border-dashed border-[var(--line)] bg-[var(--bg)] p-6 text-center md:flex ${
+      className={`hidden min-h-0 overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--bg)] md:flex ${
         isVerticalLayout ? "md:basis-1/3" : "flex-1"
       }`}>
-      <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">[ Imagen: {imageAlt} ]</p>
+      <img src={imageSrc} alt={imageAlt} loading="lazy" className="h-full w-full object-cover" />
     </div>
   );
 
@@ -113,13 +119,13 @@ const ServiceCard = ({ title, description, items, imageAlt, isWide, imageFirst }
         {/* Renderizado condicional basado en el orden deseado o si es ancho */}
         {imageFirst && !isWide ? (
           <>
-            {ImagePlaceholder}
+            {ImageContent}
             {TextContent}
           </>
         ) : (
           <>
             {TextContent}
-            {ImagePlaceholder}
+            {ImageContent}
           </>
         )}
       </div>
