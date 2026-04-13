@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { LuArrowRight, LuChevronDown, LuChevronRight, LuX } from "react-icons/lu";
+import { Link } from "react-router-dom";
 import IconButton from "../../components/shared/IconButton";
 import PrimaryButton from "../../components/shared/PrimaryButton";
 import { NAVIGATION_GROUPS } from "./navigationData";
+import { LuFacebook, LuInstagram, LuMail } from "react-icons/lu";
 
 type MobileNavMenuProps = {
   isOpen: boolean;
@@ -11,7 +13,8 @@ type MobileNavMenuProps = {
 };
 
 function MobileNavMenu({ isOpen, onClose, revealLogo = true }: MobileNavMenuProps) {
-  const [openMobileCategory, setOpenMobileCategory] = useState<string | null>(null);
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -27,12 +30,23 @@ function MobileNavMenu({ isOpen, onClose, revealLogo = true }: MobileNavMenuProp
     };
   }, [isOpen]);
 
-  const handleToggleMobileCategory = (category: string) => {
-    setOpenMobileCategory((currentCategory) => (currentCategory === category ? null : category));
+  const handleToggleSolutions = () => {
+    setIsSolutionsOpen((currentState) => {
+      const nextState = !currentState;
+      if (!nextState) {
+        setOpenCategory(null);
+      }
+      return nextState;
+    });
+  };
+
+  const handleToggleCategory = (category: string) => {
+    setOpenCategory((currentCategory) => (currentCategory === category ? null : category));
   };
 
   const handleCloseMenu = () => {
-    setOpenMobileCategory(null);
+    setIsSolutionsOpen(false);
+    setOpenCategory(null);
     onClose();
   };
 
@@ -50,14 +64,14 @@ function MobileNavMenu({ isOpen, onClose, revealLogo = true }: MobileNavMenuProp
         }`}
         style={{ boxShadow: "var(--shadow)" }}>
         <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4">
-          <a
-            href="/"
+          <Link
+            to="/"
             onClick={handleCloseMenu}
             className={`inline-block text-[1.8rem] font-black tracking-[-0.06em] text-[var(--text)] ${
               revealLogo ? "logo-teleport-enter" : "opacity-0"
             }`}>
             Innotech
-          </a>
+          </Link>
           <IconButton
             icon={<LuX aria-hidden="true" />}
             label="Cerrar navegación"
@@ -67,50 +81,85 @@ function MobileNavMenu({ isOpen, onClose, revealLogo = true }: MobileNavMenuProp
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
-          {NAVIGATION_GROUPS.map((group) => {
-            const isCategoryOpen = openMobileCategory === group.category;
+          <div className="border-b border-[var(--line)]">
+            <button
+              type="button"
+              onClick={handleToggleSolutions}
+              className="flex w-full items-center justify-between gap-4 py-4 text-left text-[1rem] font-medium text-[var(--text)]">
+              <span>Soluciones</span>
+              {isSolutionsOpen ? (
+                <LuChevronDown className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+              ) : (
+                <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+              )}
+            </button>
 
-            return (
-              <div key={group.category} className="border-b border-[var(--line)]">
-                <button
-                  type="button"
-                  onClick={() => handleToggleMobileCategory(group.category)}
-                  className="flex w-full items-center justify-between gap-4 py-4 text-left text-[1rem] font-medium text-[var(--text)]">
-                  <span>{group.category}</span>
-                  {isCategoryOpen ? (
-                    <LuChevronDown className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
-                  ) : (
-                    <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
-                  )}
-                </button>
-
-                <div
-                  className={`grid transition-all duration-300 ease-out ${
-                    isCategoryOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-                  }`}>
-                  <div className="overflow-hidden">
-                    <div className="space-y-3 pb-4 pl-1 pr-6">
-                      {group.items.map((item) => (
-                        <a
-                          key={item}
-                          href="/"
-                          className="flex items-start gap-2 text-[0.92rem] leading-6 text-[var(--text-muted)] transition hover:text-[var(--text)]">
-                          • <span>{item}</span>
-                        </a>
-                      ))}
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                isSolutionsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}>
+              <div className="overflow-hidden">
+                <div className="space-y-5 pb-4 pl-1 pr-1">
+                  {NAVIGATION_GROUPS.map((group) => (
+                    <div key={group.category}>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleCategory(group.category)}
+                        className="flex w-full items-center justify-between gap-4 py-2 text-left">
+                        <span className="text-[0.76rem] font-semibold tracking-[0.06em] text-[var(--text)]">
+                          {group.category}
+                        </span>
+                        {openCategory === group.category ? (
+                          <LuChevronDown className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+                        ) : (
+                          <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+                        )}
+                      </button>
+                      <div
+                        className={`grid transition-all duration-300 ease-out ${
+                          openCategory === group.category ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                        }`}>
+                        <div className="overflow-hidden">
+                          <div className="mt-1 space-y-2 pl-1">
+                            {group.items.map((item) => (
+                              <Link
+                                key={item}
+                                to="/"
+                                onClick={handleCloseMenu}
+                                className="flex items-start gap-2 text-[0.92rem] leading-6 text-[var(--text-muted)] transition hover:text-[var(--text)]">
+                                • <span>{item}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          </div>
+
+          <div className="border-b border-[var(--line)]">
+            <Link to="/nosotros" onClick={handleCloseMenu} className="block py-4 text-[1rem] font-medium text-[var(--text)]">
+              Nosotros
+            </Link>
+          </div>
+
+          <div className="border-b border-[var(--line)]">
+            <Link to="/portfolio" onClick={handleCloseMenu} className="block py-4 text-[1rem] font-medium text-[var(--text)]">
+              Portfolio
+            </Link>
+          </div>
         </div>
 
-        <div className="border-t border-[var(--line)] p-5">
-          <PrimaryButton
-            href="/"
-            className="!w-full justify-center"
-            icon={<LuArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}>
+        <div className=" flex items-center justify-between border-t border-[var(--line)] p-4">
+          <div className="flex items-center gap-2">
+            <IconButton icon={<LuInstagram className="h-4 w-4" aria-hidden="true" />} label="Instagram" />
+            <IconButton icon={<LuMail className="h-4 w-4" aria-hidden="true" />} label="Gmail" />
+            <IconButton icon={<LuFacebook className="h-4 w-4" aria-hidden="true" />} label="Facebook" />
+          </div>
+          <PrimaryButton href="/contact" icon={<LuArrowRight aria-hidden="true" />}>
             Contactanos
           </PrimaryButton>
         </div>

@@ -59,7 +59,7 @@ const ContactSection = () => {
 
   return (
     <section className="flex items-center justify-center bg-[linear-gradient(to_bottom,var(--bg-muted)_0%,var(--bg-muted)_40%,transparent_100%)] px-4 py-24">
-      <div className="mx-auto grid w-full max-w-[800px] grid-cols-1 items-center justify-center gap-8 rounded-2xl border border-[var(--line)] bg-[var(--bg)] p-4 lg:grid-cols-2">
+      <div className="mx-auto grid w-full max-w-[800px] grid-cols-1 items-center justify-center gap-8 rounded-xl border border-[var(--line)] bg-[var(--bg)] p-4 lg:grid-cols-2">
         {/* Lado Izquierdo: Información y Redes */}
         <div className="rounded-xl p-4">
           <SectionHeading
@@ -68,7 +68,7 @@ const ContactSection = () => {
             subtitle="Contanos qué necesitás y te respondemos con una propuesta técnica clara y adaptada a tu operación."
           />
 
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-2">
             <IconButton icon={<LuInstagram className="h-4 w-4" aria-hidden="true" />} label="Instagram" />
             <IconButton icon={<LuMail className="h-4 w-4" aria-hidden="true" />} label="Gmail" />
             <IconButton icon={<LuFacebook className="h-4 w-4" aria-hidden="true" />} label="Facebook" />
@@ -76,7 +76,7 @@ const ContactSection = () => {
         </div>
 
         {/* Lado Derecho: Formulario */}
-        <div className="rounded-xl border border-[var(--line)] bg-[var(--bg-muted-accent)] p-4">
+        <div className="rounded-lg border border-[var(--line)] bg-[var(--bg-muted-accent)] p-4">
           <SectionHeading align="center" title="Contáctanos" />
 
           <form className="mt-4 rounded-xl p-4" noValidate onSubmit={handleSubmit(onSubmit)}>

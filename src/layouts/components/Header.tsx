@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LuArrowRight, LuMenu } from "react-icons/lu";
+import { Link } from "react-router-dom";
 import PrimaryButton from "../../components/shared/PrimaryButton";
 import IconButton from "../../components/shared/IconButton";
 import DesktopNavMenu from "./DesktopNavMenu";
@@ -26,13 +27,13 @@ function Header({ revealLogo = true }: HeaderProps) {
       <div className="relative mx-auto flex w-full max-w-[1240px] items-center justify-between p-4">
         <div className="flex items-center gap-16">
           {/* Marca principal (se puede revelar tras loader). */}
-          <a
-            href="/"
+          <Link
+            to="/"
             className={`inline-block text-[1.8rem] font-black tracking-[-0.06em] text-[var(--text)] ${
               revealLogo ? "logo-teleport-enter" : "opacity-0"
             }`}>
             Innotech
-          </a>
+          </Link>
           <DesktopNavMenu />
         </div>
         <div className="hidden items-center gap-4 lg:flex">

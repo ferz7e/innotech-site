@@ -133,7 +133,7 @@ function ClientRecommendationsSection() {
         />
 
         {/* Marquee en varias filas con direcciones alternadas */}
-        <div className="relative mx-auto flex w-full max-w-[280px] flex-col gap-2">
+        <div className="relative mx-auto flex w-full max-w-[300px] md:max-w-[600px] lg:max-w-none flex-col gap-2">
           {MARQUEE_ROWS.map((row, index) => (
             <RecommendationMarqueeRow
               key={`recommendation-row-${index}`}
@@ -142,7 +142,6 @@ function ClientRecommendationsSection() {
               className={row.className}
             />
           ))}
-
           {/* Capa lineal inferior para integrar visualmente el final del bloque */}
           <div
             aria-hidden="true"

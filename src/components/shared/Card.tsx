@@ -34,7 +34,7 @@ function Card({
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">{subtitle}</p>
         </div>
 
-        <div>
+        <div className="flex justify-end">
           <SecondaryButton href={ctaHref} icon={ctaIcon ?? <LuArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}>
             {ctaLabel}
           </SecondaryButton>
