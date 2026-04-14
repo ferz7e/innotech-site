@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import SectionHeading from "../components/shared/SectionHeading";
 import { NAVIGATION_GROUPS } from "../layouts/components/navigationData";
 
@@ -28,6 +29,7 @@ const getItemsByCategory = (category: string, extra: string[] = []) => {
 // 5) bloque abajo-centro
 const SERVICES_DATA: ServiceItem[] = [
   {
+    id: "infraestructura",
     title: "Infraestructura",
     description: "Diseñamos una base tecnológica robusta para asegurar continuidad, rendimiento y escalabilidad.",
     items: getItemsByCategory("Infraestructura"),
@@ -39,6 +41,7 @@ const SERVICES_DATA: ServiceItem[] = [
     desktopClass: "lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
+    id: "comunicacion",
     title: "Comunicación",
     description: "Integramos canales de voz empresarial para que tus equipos y clientes se conecten con claridad.",
     items: getItemsByCategory("Comunicaciones"),
@@ -48,6 +51,7 @@ const SERVICES_DATA: ServiceItem[] = [
     desktopClass: "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
   },
   {
+    id: "seguridad",
     title: "Seguridad",
     description: "Protegemos tus activos críticos con soluciones de monitoreo y control para operar con confianza.",
     items: getItemsByCategory("Seguridad", ["Videovigilancia IP"]),
@@ -65,6 +69,15 @@ const SERVICES_DATA: ServiceItem[] = [
     desktopClass: "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-5",
   },
   {
+    id: "automatizaciones",
+    title: "Automatizaciones",
+    description: "Implementamos automatización inteligente para simplificar tareas repetitivas y optimizar tiempos.",
+    items: getItemsByCategory("Automatizacion", ["Domotica"]),
+    imageSrc: "https://picsum.photos/id/1070/1200/900",
+    imageAlt: "Automatizaciones y domótica",
+  },
+  {
+    id: "redes",
     title: "Redes",
     description: "Diseñamos y optimizamos redes empresariales para mantener conectividad estable y segura.",
     items: getItemsByCategory("Redes"),
@@ -153,7 +166,9 @@ function ServicesGridSection() {
   const [infraestructura, comunicacion, seguridad, automatizaciones, redes] = SERVICES_DATA;
 
   return (
-    <section className="relative flex h-full min-h-0 items-start justify-center overflow-y-auto py-6 md:min-h-screen md:items-center md:overflow-visible md:py-12">
+    <section
+      ref={scrollContainerRef}
+      className="relative flex h-full min-h-0 items-start justify-center overflow-y-auto py-6 md:min-h-screen md:items-center md:overflow-visible md:py-12">
       <div className="relative z-10 flex w-full max-w-[1240px] flex-col gap-8 p-4">
         <SectionHeading
           align="start"
