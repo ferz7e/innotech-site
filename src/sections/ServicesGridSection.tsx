@@ -2,7 +2,11 @@ import type { RefObject } from "react";
 import SectionHeading from "../components/shared/SectionHeading";
 import { NAVIGATION_GROUPS } from "../layouts/components/navigationData";
 
+type ServiceLayout = "column" | "row";
+type ServiceImageMode = "fixed200" | "fill";
+
 type ServiceItem = {
+  id: string;
   title: string;
   description: string;
   items: string[];
@@ -11,22 +15,25 @@ type ServiceItem = {
   imageFirst?: boolean;
   hideImage?: boolean;
   textFit?: boolean;
-  layout?: "column" | "row";
-  imageMode?: "fixed200" | "fill";
-  desktopClass: string;
+  layout?: ServiceLayout;
+  imageMode?: ServiceImageMode;
+};
+
+type ServiceCardProps = ServiceItem & {
+  className?: string;
+};
+
+type ServicesGridSectionProps = {
+  scrollContainerRef?: RefObject<HTMLElement | null>;
 };
 
 const getItemsByCategory = (category: string, extra: string[] = []) => {
-  const items = NAVIGATION_GROUPS.find((group) => group.category === category)?.items ?? [];
-  return Array.from(new Set([...items, ...extra]));
+  const categoryItems = NAVIGATION_GROUPS.find((group) => group.category === category)?.items ?? [];
+  return Array.from(new Set([...categoryItems, ...extra]));
 };
 
-// Layout desktop inspirado en el wireframe del usuario:
-// 1) bloque grande arriba-izquierda
-// 2) bloque pequeño arriba-derecha
-// 3) bloque alto a la derecha
-// 4) bloque abajo-izquierda
-// 5) bloque abajo-centro
+const toSlug = (value: string) => value.toLowerCase().replace(/\s+/g, "-");
+
 const SERVICES_DATA: ServiceItem[] = [
   {
     id: "infraestructura",
@@ -38,7 +45,6 @@ const SERVICES_DATA: ServiceItem[] = [
     textFit: true,
     layout: "row",
     imageMode: "fill",
-    desktopClass: "lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
     id: "comunicacion",
@@ -48,7 +54,6 @@ const SERVICES_DATA: ServiceItem[] = [
     imageSrc: "https://picsum.photos/id/1062/1200/900",
     imageAlt: "Comunicación empresarial",
     hideImage: true,
-    desktopClass: "lg:col-start-3 lg:col-end-4 lg:row-start-1 lg:row-end-2",
   },
   {
     id: "seguridad",
@@ -58,15 +63,6 @@ const SERVICES_DATA: ServiceItem[] = [
     imageSrc: "https://picsum.photos/id/1018/1200/900",
     imageAlt: "Seguridad y monitoreo",
     imageFirst: true,
-    desktopClass: "lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-5",
-  },
-  {
-    title: "Automatizaciones",
-    description: "Implementamos automatización inteligente para simplificar tareas repetitivas y optimizar tiempos.",
-    items: getItemsByCategory("Automatizacion", ["Domotica"]),
-    imageSrc: "https://picsum.photos/id/1070/1200/900",
-    imageAlt: "Automatizaciones y domótica",
-    desktopClass: "lg:col-start-1 lg:col-end-2 lg:row-start-2 lg:row-end-5",
   },
   {
     id: "automatizaciones",
@@ -85,13 +81,8 @@ const SERVICES_DATA: ServiceItem[] = [
     imageAlt: "Redes corporativas",
     textFit: true,
     imageMode: "fill",
-    desktopClass: "lg:col-start-3 lg:col-end-4 lg:row-start-2 lg:row-end-5 lg:h-full",
   },
 ];
-
-type ServiceCardProps = ServiceItem & {
-  className?: string;
-};
 
 function ServiceCard({
   title,
@@ -99,16 +90,14 @@ function ServiceCard({
   items,
   imageSrc,
   imageAlt,
-  imageFirst,
-  hideImage,
-  textFit,
+  imageFirst = false,
+  hideImage = false,
+  textFit = false,
   layout = "column",
   imageMode = "fixed200",
   className = "",
 }: ServiceCardProps) {
-  const isRowLayout = layout === "row";
-
-  const textContent = (
+  const textBlock = (
     <div
       className={`flex min-h-0 flex-col gap-8 ${
         textFit || hideImage ? "h-fit flex-none items-start justify-start" : "flex-1 justify-between"
@@ -122,9 +111,7 @@ function ServiceCard({
         {items.map((item) => (
           <li key={item} className="flex items-center gap-2">
             <span className="text-[var(--accent-2)]">•</span>
-            <a
-              href={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="transition-colors hover:text-[var(--text)]">
+            <a href={`/${toSlug(item)}`} className="transition-colors hover:text-[var(--text)]">
               {item}
             </a>
           </li>
@@ -133,7 +120,7 @@ function ServiceCard({
     </div>
   );
 
-  const imageContent = hideImage ? null : (
+  const imageBlock = hideImage ? null : (
     <div
       className={`hidden overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--bg)] md:flex ${
         imageMode === "fill" ? "min-h-0 flex-1 self-stretch" : "h-[200px] min-h-[200px]"
@@ -145,16 +132,16 @@ function ServiceCard({
   return (
     <article
       className={`group h-fit w-full rounded-xl border border-[var(--line)] bg-[var(--bg-muted-accent)] p-4 transition-all duration-300 hover:border-[var(--accent-2)] ${className}`}>
-      <div className={`flex h-full justify-between gap-8 ${isRowLayout ? "flex-col md:flex-row" : "flex-col"}`}>
+      <div className={`flex h-full justify-between gap-8 ${layout === "row" ? "flex-col md:flex-row" : "flex-col"}`}>
         {imageFirst ? (
           <>
-            {imageContent}
-            {textContent}
+            {imageBlock}
+            {textBlock}
           </>
         ) : (
           <>
-            {textContent}
-            {imageContent}
+            {textBlock}
+            {imageBlock}
           </>
         )}
       </div>
@@ -162,7 +149,7 @@ function ServiceCard({
   );
 }
 
-function ServicesGridSection() {
+function ServicesGridSection({ scrollContainerRef }: ServicesGridSectionProps) {
   const [infraestructura, comunicacion, seguridad, automatizaciones, redes] = SERVICES_DATA;
 
   return (
@@ -178,7 +165,7 @@ function ServicesGridSection() {
 
         <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:hidden">
           {SERVICES_DATA.map((service) => (
-            <ServiceCard key={service.title} {...service} />
+            <ServiceCard key={service.id} {...service} />
           ))}
         </div>
 
