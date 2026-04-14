@@ -8,12 +8,21 @@ import ClientRecommendationsSection from "../sections/ClientRecommendationsSecti
 
 const STAGE_HEIGHT_VH = 220;
 const MOBILE_MAX_WIDTH = 767;
-const SNAP_GESTURE_THRESHOLD = 40;
 const SNAP_LOCK_DURATION_MS = 520;
 const SNAP_TOLERANCE_PX = 24;
+const SNAP_GESTURE_DELTA_PX = 1;
+// Punto visual solicitado por el usuario para anclar Services en mobile.
+const MOBILE_SERVICES_SNAP_PROGRESS = 0.8562;
+
+type StagePositions = {
+  heroTop: number;
+  servicesTop: number;
+  servicesAnchorTop: number;
+};
 
 function HomePage() {
   const stageRef = useRef<HTMLElement | null>(null);
+  const servicesScrollRef = useRef<HTMLElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -34,15 +43,13 @@ function HomePage() {
       }
 
       const rawProgress = -rect.top / totalScrollableDistance;
-      const clampedProgress = Math.min(1, Math.max(0, rawProgress));
-      setScrollProgress(clampedProgress);
+      setScrollProgress(Math.min(1, Math.max(0, rawProgress)));
     };
 
-    const requestUpdate = () => {
+    const scheduleUpdate = () => {
       if (rafId) {
         return;
       }
-
       rafId = window.requestAnimationFrame(() => {
         rafId = 0;
         updateProgress();
@@ -50,12 +57,12 @@ function HomePage() {
     };
 
     updateProgress();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
@@ -73,10 +80,30 @@ function HomePage() {
 
   useEffect(() => {
     let touchStartY = 0;
+    let touchStartScrollY = 0;
+    let didHandleCurrentGesture = false;
+    let didSnapCurrentGesture = false;
     let isSnapLocked = false;
     let lockTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const isMobileViewport = () => window.innerWidth <= MOBILE_MAX_WIDTH;
+
+    const getStagePositions = (): StagePositions | null => {
+      const stageElement = stageRef.current;
+      if (!stageElement) {
+        return null;
+      }
+
+      const heroTop = stageElement.offsetTop;
+      const stageScrollableDistance = stageElement.offsetHeight - window.innerHeight;
+      if (stageScrollableDistance <= 0) {
+        return null;
+      }
+
+      const servicesTop = heroTop + stageScrollableDistance;
+      const servicesAnchorTop = heroTop + stageScrollableDistance * MOBILE_SERVICES_SNAP_PROGRESS;
+      return { heroTop, servicesTop, servicesAnchorTop };
+    };
 
     const lockSnap = () => {
       isSnapLocked = true;
@@ -88,62 +115,141 @@ function HomePage() {
       }, SNAP_LOCK_DURATION_MS);
     };
 
-    const handleSnap = (deltaY: number) => {
-      if (!isMobileViewport() || isSnapLocked || Math.abs(deltaY) < SNAP_GESTURE_THRESHOLD) {
+    const resetServicesInternalScroll = () => {
+      const servicesContainer = servicesScrollRef.current;
+      if (!servicesContainer) {
         return;
       }
+      servicesContainer.scrollTo({ top: 0, behavior: "auto" });
+    };
 
-      const stageElement = stageRef.current;
-      if (!stageElement) {
-        return;
+    const snapWindowTo = (top: number) => {
+      window.scrollTo({ top, behavior: "auto" });
+    };
+
+    const trySnapDownFromHero = (gestureStartScrollY: number) => {
+      if (!isMobileViewport() || isSnapLocked) {
+        return false;
       }
 
-      const stageTop = stageElement.offsetTop;
-      const stageScrollableDistance = stageElement.offsetHeight - window.innerHeight;
-      if (stageScrollableDistance <= 0) {
-        return;
+      const positions = getStagePositions();
+      if (!positions) {
+        return false;
       }
 
-      const heroTop = stageTop;
-      const servicesTop = stageTop + stageScrollableDistance;
-      const currentScrollY = window.scrollY;
-      const isInsideStage =
-        currentScrollY >= heroTop - SNAP_TOLERANCE_PX && currentScrollY <= servicesTop + SNAP_TOLERANCE_PX;
+      const { heroTop, servicesTop, servicesAnchorTop } = positions;
+      const startedFromHeroZone =
+        gestureStartScrollY >= heroTop - SNAP_TOLERANCE_PX && gestureStartScrollY < servicesTop - SNAP_TOLERANCE_PX;
 
-      if (!isInsideStage) {
-        return;
+      if (!startedFromHeroZone) {
+        return false;
       }
 
-      // Gesto hacia abajo en Hero (o tramo inicial) -> salta al inicio de Services.
-      if (deltaY > 0 && currentScrollY <= heroTop + stageScrollableDistance * 0.38) {
-        window.scrollTo({ top: servicesTop, behavior: "smooth" });
-        lockSnap();
-        return;
+      resetServicesInternalScroll();
+      snapWindowTo(servicesAnchorTop);
+      lockSnap();
+      return true;
+    };
+
+    const trySnapUpToHero = (gestureStartScrollY: number) => {
+      if (!isMobileViewport() || isSnapLocked) {
+        return false;
       }
 
-      // Gesto hacia arriba al llegar al inicio de Services -> vuelve a Hero completo.
-      if (deltaY < 0 && Math.abs(currentScrollY - servicesTop) <= SNAP_TOLERANCE_PX * 3) {
-        window.scrollTo({ top: heroTop, behavior: "smooth" });
-        lockSnap();
+      const positions = getStagePositions();
+      if (!positions) {
+        return false;
       }
+
+      const { heroTop, servicesAnchorTop } = positions;
+      const startedNearServicesAnchor = Math.abs(gestureStartScrollY - servicesAnchorTop) <= SNAP_TOLERANCE_PX * 3;
+      if (!startedNearServicesAnchor) {
+        return false;
+      }
+
+      snapWindowTo(heroTop);
+      lockSnap();
+      return true;
     };
 
     const handleTouchStart = (event: TouchEvent) => {
       touchStartY = event.changedTouches[0]?.clientY ?? 0;
+      touchStartScrollY = window.scrollY;
+      didHandleCurrentGesture = false;
+      didSnapCurrentGesture = false;
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (!isMobileViewport()) {
+        return;
+      }
+
+      // Tras el snap inicial, se bloquea cualquier desplazamiento restante del mismo gesto.
+      if (didSnapCurrentGesture) {
+        event.preventDefault();
+        return;
+      }
+
+      if (isSnapLocked || didHandleCurrentGesture) {
+        return;
+      }
+
+      const currentY = event.changedTouches[0]?.clientY ?? touchStartY;
+      const deltaY = touchStartY - currentY;
+      if (Math.abs(deltaY) < SNAP_GESTURE_DELTA_PX) {
+        return;
+      }
+
+      if (deltaY > 0 && trySnapDownFromHero(touchStartScrollY)) {
+        event.preventDefault();
+        didHandleCurrentGesture = true;
+        didSnapCurrentGesture = true;
+        return;
+      }
+
+      if (deltaY < 0 && trySnapUpToHero(touchStartScrollY)) {
+        event.preventDefault();
+        didHandleCurrentGesture = true;
+        didSnapCurrentGesture = true;
+      }
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
+      // Si el snap ya ocurrió en touchmove, no hacemos nada más.
+      if (didSnapCurrentGesture || didHandleCurrentGesture) {
+        didSnapCurrentGesture = false;
+        return;
+      }
+
       const touchEndY = event.changedTouches[0]?.clientY ?? touchStartY;
       const deltaY = touchStartY - touchEndY;
-      handleSnap(deltaY);
+      if (Math.abs(deltaY) < SNAP_GESTURE_DELTA_PX) {
+        return;
+      }
+
+      if (deltaY > 0) {
+        trySnapDownFromHero(touchStartScrollY);
+        return;
+      }
+
+      trySnapUpToHero(touchStartScrollY);
+    };
+
+    const handleTouchCancel = () => {
+      didHandleCurrentGesture = false;
+      didSnapCurrentGesture = false;
     };
 
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
 
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
       if (lockTimeoutId) {
         clearTimeout(lockTimeoutId);
       }
@@ -168,7 +274,7 @@ function HomePage() {
           <div
             className="absolute inset-0 z-20 bg-[linear-gradient(to_bottom,transparent_0%,var(--bg-muted)_40%,var(--bg-muted)_100%)]"
             style={{ willChange: "transform", transform: `translateY(${servicesTranslateY}%)` }}>
-            <ServicesGridSection />
+            <ServicesGridSection scrollContainerRef={servicesScrollRef} />
           </div>
         </div>
       </section>
