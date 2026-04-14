@@ -9,10 +9,10 @@ const MARQUEE_ITEMS = [...BRANDS, ...BRANDS, ...BRANDS, ...BRANDS];
 
 const HERO_COPY = {
   badge: "Soluciones IT para empresas",
-  titleStart: "Conectividad, seguridad",
-  titleHighlight: "y operación sin interrupciones",
+  titleStart: "Conectividad y seguridad",
+  titleHighlight: "En tus operaciones",
   subtitle:
-    "Innotech combina infraestructura, redes, seguridad y automatización para lanzar proyectos rápidos, sólidos y listos para crecer sin fricción.",
+    "En Innotech desarrollamos soluciones de infraestructura, redes, seguridad y automatización, pensadas para impulsar la eficiencia y el crecimiento de tu empresa.",
   cta: "Hablá con nuestro equipo",
   trustText: "Nuestros clientes confían en la calidad de nuestras soluciones",
 } as const;
